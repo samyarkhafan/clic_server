@@ -32,7 +32,7 @@ def rooms(request):
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(["GET","PATCH","DELETE"])
+@api_view(["GET","PATCH"])
 @permission_classes([IsAuthenticated])
 def room(request,pk):
     try:
@@ -40,13 +40,7 @@ def room(request,pk):
     except:
         return Response({"error":"object not found"},status=status.HTTP_404_NOT_FOUND)
     else:
-        if request.method=="DELETE":
-            if request.user==room.creator:
-                room.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            else:
-                return Response({"error":"Only the creator can delete the room."},status=status.HTTP_403_FORBIDDEN)
-        elif request.method=="GET":
+        if request.method=="GET":
             if request.user in room.members.all() or request.user in room.admins.all():
                 serializer=RoomSerializerA(room)
                 return Response(serializer.data)

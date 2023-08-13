@@ -254,7 +254,7 @@ class ChatConsumer(WebsocketConsumer):
                 ))
         elif text_data_json['type']=='delete':
             if self.user==room.creator:
-                async_to_sync(self.channel_layer.group_send)(self.room_code,{"type":"room.delete"})
+                async_to_sync(self.channel_layer.group_send)(self.room_code,{"type":"room.delete","text":room})
                     
     def disconnect(self, close_code):
         room=Room.objects.get(code=self.room_code)
@@ -313,7 +313,8 @@ class ChatConsumer(WebsocketConsumer):
                         "text":f"THIS ROOM HAS BEEN DELETED BY IT'S CREATOR!"
                     }
         ))
-            
         self.close()
+        room=event['text']
+        room.delete()
         
         

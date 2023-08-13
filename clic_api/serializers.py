@@ -4,6 +4,7 @@ from .models import Room,FriendRequest,Upload
 from django.contrib.auth import get_user_model
 from rest_framework.validators import UniqueTogetherValidator
 import os
+import re
 # Creator Serializer
 # Public View Serializer
 # Allowed View Serializer
@@ -143,6 +144,9 @@ class UploadSerializerC(ModelSerializer):
             data['caption']='Availiable for download'
         if Upload.objects.filter(dname=data['dname'],room=data['room']).count() != 0:
             raise serializers.ValidationError("A file with this dname is already uploaded!")
+        print(data['dname'])
+        data['dname']=re.sub(r"\s+","_",data['dname'])
+        print(data['dname'])
         return data
 
     class Meta:
